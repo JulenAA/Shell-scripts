@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Ejemplo básico de funciones
+
+RATITO=1
+
+fun () # Se declara antes de usarla
+{
+	i=0
+	REPETICIONES=30
+	echo
+	echo "Comienza a ejecutar la función"
+	echo
+	sleep $RATITO # Hey, wait a second!
+	while [ $i -lt $REPETICIONES ]
+	do
+		echo "<--------FUNCTIONS-------->"
+		echo "<-----------ARE----------->"
+		echo "<-----------FUN----------->"
+		echo
+		let "i+=1"
+	done
+}
+
+
+# Invocamos la función
+
+fun
+
+exit $?

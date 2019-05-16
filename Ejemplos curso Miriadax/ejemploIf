@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Ejemplo básico de if
+# Cuenta el número de argumentos y los clasifica por rangos
+
+numarg=$#
+
+if [ $numarg -eq 0 ]
+then
+	echo "Sin argumentos"
+elif [ $numarg -eq 1 -o $numarg -eq 2 ]
+then
+	echo "Uno o dos argumentos"
+elif [ $numarg -le 9 ]
+then
+	echo "Entre 3 y 9 argumentos"
+elif [ $numarg -le 19 ]
+then
+	echo "Entre 10 y 19 argumentos"
+else
+	echo "20 o más argumentos"
+fi
+
+

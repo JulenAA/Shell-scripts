@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Ejemplo básico de case
+# Cuenta el número de argumentos y los clasifica por rangos
+
+case $# in
+	0) echo "Sin argumentos";;
+	1|2) echo "Uno o dos argumentos";;
+	[3-9]) echo "Entre 3 y 9 argumentos";;
+	1[0-9]) echo "Entre 10 y 19 argumentos";;
+	*) echo "20 o más argumentos"
+esac

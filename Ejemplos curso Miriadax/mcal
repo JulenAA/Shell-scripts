@@ -1,0 +1,129 @@
+#!/bin/bash
+
+#
+# Curso Introduccion a linux como entorno de desarrollo de sistemas software
+# Miriadax - Ejercicio P2P 6.5
+# Autor: JulenAA
+#
+
+
+################## VARIABLES #######################
+
+# Variables (Por defecto cogemos el mes y año actuales)
+MES=$(date "+%m")
+ANIO=$(date "+%Y")
+
+# Otras variables
+MISCRIPT=`basename $0` # Nombre del script sin path
+
+# Códigos de error para exit
+E_MASARGUMENTOS=21
+E_MESINCORRECTO=22
+E_ANIOINCORRECTO=23
+E_ARGINCORRECTO=24
+
+es_numero='^[0-9]+$' # Expresion regular para expresar una cadena de números
+
+
+
+################## FUNCIONES #######################
+
+# Función muestra la ayuda del comando
+display_help() {
+    echo
+    echo "  Comando mcal"
+    echo "================"
+    echo
+    echo "Muestra el calendario del mes o año especificado, por defecto el mes actual"
+    echo "Sintaxis mcal [mes] [año] "
+    echo "   Un único argumento numérico, si el valor está comprendido entre 1 y 12 se interpreta como mes, en caso contrario como año"
+    echo "   Dos argumentos corresponderán al mes y al año"
+    echo "   El argumento correspondiente al mes podrá ser indicado con su número, nombre o abreviatura tanto en ingles como en castellano"
+    echo
+    echo "Otros argumentos"
+    echo "   -help           muestra la ayuda del comando"
+    echo
+}
+##### Fin funcion #####
+
+# Función al que se le pasa un cadena de texto y devuelve el mes correpondiente
+obtenmes () {
+case $entrada in
+	enero|ene|january|jan|1 ) resultado=1 ;;
+	feb|febrero|february|2 ) resultado=2;;
+	mar|marzo|march|3 ) resultado=3;;
+	abr|abril|apr|april|4 ) resultado=4;;
+	mayo|may|5 ) resultado=5;;
+	junio|jun|june|6 ) resultado=6;;
+	jul|julio|july|7 ) resultado=7;;
+	ago|agosto|august|aug|8 ) resultado=8;;
+	sep|septiembre|setiembre|september|9 ) resultado=9;;
+	oct|octubre|october|10 ) resultado=10;;
+	nov|noviembre|november|11 ) resultado=11;;
+	dic|diciembre|december|dec|12 ) resultado=12;;
+*) resultado="ERROR"
+esac
+}
+##### Fin funcion #####
+
+
+entrada=`echo "$1" | tr '[:upper:]' '[:lower:]'` # Convertir a minúsculas el primer argumento
+
+
+case $# in 	# Comprobamos el número de argumentos
+0) 		# Comando sin argumentos, utilizamos valores por defecto
+	cal $MES $ANIO
+   ;;
+1)	# Comando con un argumento
+	if [[ $entrada =~ $es_numero ]]
+       	then # Argumento numérico
+                if [ $entrada -lt 13 ]
+                then
+                          cal $1 $ANIO #el argumento corresponde a un mes
+                else
+                          cal $1 #el argumento corresponde a un año
+                fi
+      	else # No es numerico
+            if [ $entrada = "-help" ]
+            then # Si es ayuda
+                    display_help
+            else # No es Ayuda, llamar a la función obtenmes
+                    obtenmes
+                    case $resultado in # Si la cadena no es valida se devuelve  ERROR
+                            'ERROR' ) echo "Argumento $1 incorrecto" >&2; exit ${E_ARGINCORRECTO};; # Mes incorrecto
+                             * ) cal $resultado $ANIO;; # Mes correcto, se realiza la llamada
+                    esac
+            fi
+      fi
+   ;;
+2) # Dos argumentos
+	if [[ $1 =~ $es_numero ]]
+        then # Argumento numérico
+                if [ $1 -lt 13 ]
+                then
+                          MES=$1
+                else
+                          echo "Mes $1 incorrecto" >&2; exit ${E_MESINCORRECTO} # Mes incorrecto
+                fi
+        else # No es numerico
+                obtenmes
+                case $resultado in # Si la cadena no es valida se devuelve ERROR
+                     'ERROR' ) echo "Mes $1 incorrecto" >&2; exit ${E_MESINCORRECTO};; # Mes incorrecto
+                             * ) MES=$1;; # Mes correcto
+                esac
+        fi
+
+	if [[ $2 =~ $es_numero ]]
+        then # Argumento 2 numérico
+		ANIO=$2
+	else
+		echo "Año $2 incorrecto" >&2; exit ${E_ANIOINCORRECTO}
+	fi
+	cal $MES $ANIO
+   ;;
+*) # Tres o mas argumentos
+	echo "Uso comando ${MISCRIPT} erróneo" >&2;
+	display_help
+	exit ${E_MASARGUMENTOS}
+   ;;
+esac

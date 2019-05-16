@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Ejemplo básico de for
+# El asterisco en for expande a la lista de ficheros en $PWD
+# Este script es equivalente a ls -l .
+
+for file in *
+do
+	ls -l file
+done
+
+exit 0

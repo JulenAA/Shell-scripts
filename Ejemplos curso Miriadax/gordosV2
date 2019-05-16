@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Estructuras de control y asignacion de argumentos
+
+#Codigos de error para exit
+E_NODIR=21
+E_NONUM=22
+E_NOOP=23
+E_MASTRES=24
+
+# Otras variables
+MISCRIPT=`basename $0` # Nombre del script sin path
+
+case $# in	# Comprobamos el número de argumentos
+0) dir=$HOME; num=10;;	# Comando sin argumentos, asignamos valores por defecto
+1) if [ -d $1 ]	# Un solo argumento -> DIR
+   then
+	dir=$1; num=10	# El directorio DIR existe
+   else
+	echo "$1 no existe o no es un directorio" >&2; exit ${E_NODIR}	# Error en DIR
+   fi;;
+2) case $1 in # Comando con dos argumentos -> -n k
+   -n)
+      case $2 in
+      [1-9]|[1-9][0-9]) num=$2; dir=$HOME;; # patron de numero entre 1 y 99
+      *) echo "Uso: ${MISCRIPT} [-n k] [DIR], 0<k<100" >&2; exit ${E_NONUM};;
+      esac;;
+   *) echo "$1: opcion desconocida" >&2; exit ${E_NOOP};;
+   esac;;
+3) case $1 in # Comando con tres argumentos -> -n k DIR
+   -n)
+      case $2 in
+      [1-9]|[1-9][0-9]) # patron de numero entre 1 y 99
+      num=$2;
+      if [ -d $3 ] # Si existe y es un directorio
+      then
+         dir=$3
+      else
+         echo "$3 no existe o no es un directorio" >&2; exit ${E_NODIR}
+      fi;;
+      *) echo "Uso: ${MISCRIPT} [-n k] [DIR], 0<k<100" >&2; exit ${E_NONUM};;
+      esac;;
+   *) echo "$1: opcion desconocida" >&2; exit ${E_NOOP};;
+   esac;;
+*) # Mas de tres argumentos
+   echo "Uso: ${MISCRIPT} [-n k] [DIR], 0<k<100" >&2; exit ${E_MASTRES};;
+esac
+
+du $dir | sort -n | tail -$num
+exit $? # Devuelve el valor de retorno del ultimo comando ejecutado

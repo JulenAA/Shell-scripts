@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Ejemplo básico de while
+
+echo
+while [ "$var" != "fin" ] # En bucle mientras no escribamos fin
+do
+	echo "Introduzca palabra (fin para acabar)"
+	read var  # Lee de la entrada el valor de la palabra y lo asigna a var
+	echo "palabra = $var"
+	echo
+done
+
+exit 0
